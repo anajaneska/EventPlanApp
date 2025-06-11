@@ -1,19 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import EventList from './components/EventList';
+import React, { useState } from "react";
+import EventList from "./components/EventList";
+import EventForm from "./components/EventForm";
 
 function App() {
+  const [editingId, setEditingId] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+
+  const handleSave = () => {
+    setEditingId(null);
+    setRefresh(!refresh);  // trigger refresh list
+  };
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<EventList />} />
-        {/* додади подоцна и /create и /edit/:id */}
-      </Routes>
-    </Router>
+    <div>
+      <h1>Event Planner</h1>
+      <EventForm eventId={editingId} onSave={handleSave} />
+      <EventList key={refresh} />
+    </div>
   );
 }
 
 export default App;
+
 

@@ -1,34 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { getEvents, deleteEvent } from '../services/eventService';
+import React, { useEffect, useState } from "react";
+import { getEvents, deleteEvent } from '../services/EventService.js';
 
-const EventList = () => {
+export default function EventList() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
     loadEvents();
   }, []);
 
-  const loadEvents = () => {
-    getEvents().then(res => setEvents(res.data));
+  const loadEvents = async () => {
+    const response = await getEvents();
+    setEvents(response.data);
   };
 
-  const handleDelete = (id) => {
-    deleteEvent(id).then(loadEvents);
+  const handleDelete = async (id) => {
+    await deleteEvent(id);
+    loadEvents();
   };
 
   return (
     <div>
-      <h2>Сите настани</h2>
+      <h2>Events</h2>
       <ul>
-        {events.map(event => (
+        {events.map((event) => (
           <li key={event.id}>
-            <strong>{event.title}</strong> – {event.location}
-            <button onClick={() => handleDelete(event.id)}>Избриши</button>
+            <strong>{event.title}</strong> - {event.location}
+            <button onClick={() => handleDelete(event.id)}>Delete</button>
           </li>
         ))}
       </ul>
     </div>
   );
-};
-
-export default EventList;
+}
