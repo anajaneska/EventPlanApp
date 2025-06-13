@@ -1,25 +1,14 @@
-package mk.ukim.finki.backend1.model;
+package mk.ukim.finki.backend1.model.dto;
 
-
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import mk.ukim.finki.backend1.model.enumerations.Status;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Data
-public class Event {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class EventDto {
     private String title;
     private String description;
     private String location;
@@ -28,20 +17,16 @@ public class Event {
     private LocalDateTime endTime;
     private Status status;
 
-    public Event() {
+    public EventDto() {
     }
 
-    public Event(String title, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Status status) {
+    public EventDto(String title, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Status status) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getTitle() {
@@ -62,6 +47,10 @@ public class Event {
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     public void setTitle(String title) {
@@ -86,9 +75,5 @@ public class Event {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public Status getStatus() {
-        return status;
     }
 }

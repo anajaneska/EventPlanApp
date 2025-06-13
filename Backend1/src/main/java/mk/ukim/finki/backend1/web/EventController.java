@@ -2,7 +2,9 @@ package mk.ukim.finki.backend1.web;
 
 
 import mk.ukim.finki.backend1.model.Event;
+import mk.ukim.finki.backend1.model.dto.EventDto;
 import mk.ukim.finki.backend1.service.EventService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +14,6 @@ import java.util.Optional;
 @RequestMapping("/api/events")
 @CrossOrigin(origins = "http://localhost:3000")
 public class EventController {
-
     private final EventService eventService;
 
     public EventController(EventService eventService) {
@@ -25,23 +26,32 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Event> getEvent(@PathVariable Long id) {
-        return eventService.getEventById(id);
+    public ResponseEntity<Event> getEvent(@PathVariable Long id) {
+        return this.eventService.getEventById(id)
+                .map(event -> ResponseEntity.ok().body(event))
+                .orElseGet(()->ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public Event createEvent(@RequestBody Event event) {
-        return eventService.createEvent(event);
+    @PostMapping("/add")
+    public ResponseEntity<Event> createEvent(@RequestBody EventDto eventDto) {
+        return this.eventService.createEvent(eventDto)
+                .map(event -> ResponseEntity.ok().body(event))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @PutMapping("/{id}")
-    public Event updateEvent(@PathVariable Long id, @RequestBody Event event) {
-        return eventService.updateEvent(id, event);
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody EventDto eventDto) {
+        return this.eventService.updateEvent(id,eventDto)
+                .map(event -> ResponseEntity.ok().body(event))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteEvent(@PathVariable Long id) {
-        eventService.deleteEvent(id);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity deleteEvent(@PathVariable Long id) {
+        this.eventService.deleteEvent(id);
+        if(this.eventService.getEventById(id).isEmpty())
+            return ResponseEntity.ok().build();
+        return ResponseEntity.badRequest().build();
     }
 }
 
