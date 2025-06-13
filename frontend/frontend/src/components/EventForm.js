@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { createEvent, updateEvent, getEventById } from '../services/EventService.js';
+import './EventForm.css'; // You can extract form styles here if preferred
 
-export default function EventForm({ eventId, onSave }) {
-  const [event, setEvent] = useState({
+export default function EventForm({ event, onSave, onClose }) {
+  const [formData, setFormData] = useState({
     title: "",
     description: "",
     location: "",
@@ -11,35 +12,56 @@ export default function EventForm({ eventId, onSave }) {
   });
 
   useEffect(() => {
-    if (eventId) {
-      getEventById(eventId).then((res) => {
-        setEvent(res.data);
+    if (event) {
+      setFormData(event);
+    } else {
+      setFormData({
+        title: "",
+        description: "",
+        location: "",
+        startTime: "",
+        endTime: "",
       });
     }
-  }, [eventId]);
+  }, [event]);
 
   const handleChange = (e) => {
-    setEvent({ ...event, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (eventId) {
-      await updateEvent(eventId, event);
+    if (event && event.id) {
+      await updateEvent(event.id, formData);
     } else {
-      await createEvent(event);
+      await createEvent(formData);
     }
     onSave();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input name="title" value={event.title} onChange={handleChange} placeholder="Title" required />
-      <input name="location" value={event.location} onChange={handleChange} placeholder="Location" required />
-      <textarea name="description" value={event.description} onChange={handleChange} placeholder="Description" />
-      <input name="startTime" value={event.startTime} onChange={handleChange} type="datetime-local" required />
-      <input name="endTime" value={event.endTime} onChange={handleChange} type="datetime-local" required />
-      <button type="submit">{eventId ? "Update" : "Create"} Event</button>
+    <form className="event-form" onSubmit={handleSubmit}>
+      <h2>{event ? "Edit Event" : "Create Event"}</h2>
+
+      <label>Title</label>
+      <input name="title" value={formData.title} onChange={handleChange} placeholder="Event Title" required />
+
+      <label>Location</label>
+      <input name="location" value={formData.location} onChange={handleChange} placeholder="Location" required />
+
+      <label>Description</label>
+      <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Description" />
+
+      <label>Start Time</label>
+      <input name="startTime" value={formData.startTime} onChange={handleChange} type="datetime-local" required />
+
+      <label>End Time</label>
+      <input name="endTime" value={formData.endTime} onChange={handleChange} type="datetime-local" required />
+
+      <div className="form-buttons">
+        <button type="submit">{event ? "Update" : "Create"}</button>
+        <button type="button" className="cancel-btn" onClick={onClose}>Cancel</button>
+      </div>
     </form>
   );
 }

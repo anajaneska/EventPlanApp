@@ -35,14 +35,15 @@ export default function EventList() {
 
   return (
     <div>
-      <h2>Events</h2>
-      <button onClick={() => { setEditingEvent(null); setShowForm(true); }}>Add Event</button>
-
       {showForm && (
-        <EventForm event={editingEvent} onClose={handleFormClose} />
-      )}
+  <EventForm
+    event={editingEvent} // Safely access ID
+    onSave={handleFormClose}    // This fixes the onSave error
+    onClose={handleFormClose}
+  />
+)}
 
-      <div className="card-list">
+      <div className="card-container">
         {events.map(event => (
           <EventCard
             key={event.id}

@@ -4,24 +4,41 @@ import EventForm from "./components/EventForm";
 import './App.css';
 
 function App() {
-  const [editingId, setEditingId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editingEventId, setEditingEventId] = useState(null);
   const [refresh, setRefresh] = useState(false);
 
+  const toggleForm = (eventId = null) => {
+    setEditingEventId(eventId);
+    setShowForm(!showForm);
+  };
+
   const handleSave = () => {
-    setEditingId(null);
-    setRefresh(!refresh);  // trigger refresh list
+    setShowForm(false);
+    setEditingEventId(null);
+    setRefresh(!refresh);
   };
 
   return (
-    <div className="app-container"v>
-      <header>Event Planner</header>
-      <EventList key={refresh} />
-      <EventForm eventId={editingId} onSave={handleSave} />
-      
+    <div className="app-container">
+      <header className="header">
+          Event Planner
+        <button className="create-btn" onClick={() => toggleForm(null)}>+ Create Event</button>
+      </header>
+
+      {showForm && (
+        <div className="modal-overlay">
+          <EventForm eventId={editingEventId} onSave={handleSave} onClose={() => setShowForm(false)} />
+        </div>
+      )}
+
+      <EventList onEdit={toggleForm} key={refresh} />
     </div>
   );
 }
 
 export default App;
+
+
 
 

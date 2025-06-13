@@ -64,6 +64,8 @@ public class EventServiceImpl implements EventService {
         event.setDescription(location);
         event.setStatus(calculatedStatus);
 
+        eventRepository.save(event);
+
         return Optional.of(event);
     }
 
@@ -73,13 +75,14 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new EventNotFoundException(id));
         Status calculatedStatus = calculateStatus(eventDto.getStartTime(), eventDto.getEndTime());
 
-        event.setTitle(event.getTitle());
-        event.setLocation(event.getLocation());
-        event.setStartTime(event.getStartTime());
-        event.setEndTime(event.getEndTime());
-        event.setDescription(event.getLocation());
+        event.setTitle(eventDto.getTitle());
+        event.setLocation(eventDto.getLocation());
+        event.setStartTime(eventDto.getStartTime());
+        event.setEndTime(eventDto.getEndTime());
+        event.setDescription(eventDto.getLocation());
         event.setStatus(calculatedStatus);
 
+        eventRepository.save(event);
         return Optional.of(event);
     }
 
