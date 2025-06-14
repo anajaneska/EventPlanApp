@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./Backend1
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/EventPlanDb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234567890
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+        echo 'Waiting for PostgreSQL...';
+        until pg_isready -h db -p 5432 -U postgres; do
+          sleep 2;
+        done;
+        echo 'PostgreSQL is ready!';
+        java -jar app.jar
+      "
+    networks:
+      - app-network
+
+  db:
+    image: postgres:16
+    container_name: pgdb
+    restart: always
+    environment:
+      POSTGRES_DB: EventPlanDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234567890
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
