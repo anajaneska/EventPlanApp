@@ -21,6 +21,7 @@ jobs:
       - name: Build JAR with Maven
         run: |
           cd Backend1
+          chmod +x mvnw
           ./mvnw clean package -DskipTests
 
       - name: Set up Docker Buildx
