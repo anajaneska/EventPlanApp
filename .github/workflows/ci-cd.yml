@@ -39,4 +39,4 @@ jobs:
           context: ./Backend1
           file: ./Backend1/Dockerfile
           push: true
-          tags: your-dockerhub-username/eventplanner-backend:latest
+          tags: anajaneska/eventplanner-backend:latest
