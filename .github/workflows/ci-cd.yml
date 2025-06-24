@@ -1,4 +1,4 @@
-name: Build and Push Backend
+name: Build and Push Backend and Frontend
 
 on:
   push:
@@ -18,11 +18,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build JAR with Maven
+      - name: Build Backend JAR with Maven
         run: |
           cd Backend1
           chmod +x mvnw
           ./mvnw clean package -DskipTests
+          cd ..
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -33,10 +34,18 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Backend Docker Image
         uses: docker/build-push-action@v5
         with:
           context: ./Backend1
           file: ./Backend1/Dockerfile
           push: true
           tags: anajaneska/eventplanner-backend:latest
+
+      - name: Build and Push Frontend Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend/frontend
+          file: ./frontend/frontend/Dockerfile
+          push: true
+          tags: anajaneska/eventplanner-frontend:latest
