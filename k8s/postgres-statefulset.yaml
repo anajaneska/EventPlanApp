@@ -27,6 +27,22 @@ spec:
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 30
+            periodSeconds: 30
   volumeClaimTemplates:
     - metadata:
         name: postgres-storage
@@ -35,3 +51,4 @@ spec:
         resources:
           requests:
             storage: 1Gi
+
